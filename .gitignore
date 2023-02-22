@@ -43,5 +43,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+/pubspec.lock
 /lib/keys.dart
-./pubspec.lock
