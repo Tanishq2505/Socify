@@ -85,26 +85,26 @@ class _PostsScreenState extends State<PostsScreen>
                       onRefresh: _onRefresh,
                       controller: _refreshController,
                       child: ListView.builder(
-                        padding: EdgeInsets.all(8),
+                        // padding: EdgeInsets.all(8),
                         itemBuilder: (itemBuilder, index) => Container(
                           // decoration: BoxDecoration(
                           //   borderRadius: BorderRadius.circular(30),
                           //   color: Colors.grey.shade200,
                           // ),
-                          height: size.width + (size.height * 0.15),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Column(
-                              children: [
-                                Divider(
-                                  height: 0,
-                                ),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Expanded(
-                                  flex: 1,
+                          height: size.width + (size.height * 0.16),
+                          child: Column(
+                            children: [
+                              Divider(
+                                height: 0,
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
                                   child: Container(
                                     child: Row(
                                       mainAxisAlignment:
@@ -122,9 +122,10 @@ class _PostsScreenState extends State<PostsScreen>
                                             maxRadius: 19,
                                             child: ClipOval(
                                               child: Image(
-                                                image: NetworkImage(data[index]
-                                                    .owner!
-                                                    .picture!),
+                                                image: NetworkImage(
+                                                  data[index].owner!.picture!,
+                                                  scale: 0.1,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -144,104 +145,103 @@ class _PostsScreenState extends State<PostsScreen>
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 4,
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Divider(
+                                height: 0,
+                              ),
+                              Expanded(
+                                flex: 7,
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        data[index].image!,
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: ClipRect(
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 4.0,
+                                        sigmaY: 4.0,
+                                      ),
+                                      child: Image.network(
+                                        data[index].image!,
+                                        loadingBuilder: (BuildContext context,
+                                            Widget child,
+                                            ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                Divider(
-                                  height: 0,
-                                ),
-                                Expanded(
-                                  flex: 7,
+                              ),
+                              Divider(
+                                height: 0,
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 8),
                                   child: Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                          data[index].image!,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        SizedBox(
+                                          height: 6,
                                         ),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    child: ClipRect(
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                          sigmaX: 4.0,
-                                          sigmaY: 4.0,
+                                        Expanded(
+                                          child: Text(
+                                            data[index].text.toString(),
+                                          ),
                                         ),
-                                        child: Image.network(
-                                          data[index].image!,
-                                          loadingBuilder: (BuildContext context,
-                                              Widget child,
-                                              ImageChunkEvent?
-                                                  loadingProgress) {
-                                            if (loadingProgress == null)
-                                              return child;
-                                            return Center(
-                                              child: CircularProgressIndicator(
-                                                value: loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.thumb_up_outlined,
                                               ),
-                                            );
-                                          },
+                                              SizedBox(
+                                                width: 2,
+                                              ),
+                                              Text(
+                                                data[index].likes.toString(),
+                                              ),
+                                              Spacer(),
+                                              TextButton(
+                                                onPressed: () {},
+                                                child: Text("View Comments"),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                Divider(
-                                  height: 0,
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0, vertical: 8),
-                                    child: Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          SizedBox(
-                                            height: 6,
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              data[index].text.toString(),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.thumb_up_outlined,
-                                                ),
-                                                SizedBox(
-                                                  width: 2,
-                                                ),
-                                                Text(
-                                                  data[index].likes.toString(),
-                                                ),
-                                                Spacer(),
-                                                TextButton(
-                                                  onPressed: () {},
-                                                  child: Text("View Comments"),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                         itemCount: data.length,
