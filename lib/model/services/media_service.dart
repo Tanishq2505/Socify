@@ -33,7 +33,7 @@ class MediaService {
         url,
       );
       responseJson = returnResponse(response);
-    } on SocketException {
+    } on DioError {
       throw FetchDataException('No Internet Connection');
     }
     return responseJson;
@@ -47,7 +47,7 @@ class MediaService {
         data: body,
       );
       responseJson = returnResponse(response);
-    } on SocketException {
+    } on DioError {
       throw FetchDataException('No Internet Connection');
     }
     return responseJson;
@@ -61,7 +61,7 @@ class MediaService {
         data: body,
       );
       responseJson = returnResponse(response);
-    } on SocketException {
+    } on DioError {
       throw FetchDataException('No Internet Connection');
     }
     return responseJson;
@@ -74,7 +74,7 @@ class MediaService {
         url,
       );
       responseJson = returnResponse(response);
-    } on SocketException {
+    } on DioError {
       throw FetchDataException('No Internet Connection');
     }
     return responseJson;
