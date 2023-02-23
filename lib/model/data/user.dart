@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class UserDataList {
   List<UserData>? data;
   int? total;
@@ -10,7 +12,7 @@ class UserDataList {
     if (json['data'] != null) {
       data = <UserData>[];
       json['data'].forEach((v) {
-        data!.add(new UserData.fromJson(v));
+        data!.add(new UserData().fromJson(v));
       });
     }
     total = json['total'];
@@ -30,7 +32,7 @@ class UserDataList {
   }
 }
 
-class UserData {
+class UserData extends ChangeNotifier {
   String? id;
   String? title;
   String? firstName;
@@ -56,9 +58,11 @@ class UserData {
       this.phone,
       this.location,
       this.registerDate,
-      this.updatedDate});
+      this.updatedDate}) {
+    notifyListeners();
+  }
 
-  UserData.fromJson(Map<String, dynamic> json) {
+  fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     firstName = json['firstName'];
@@ -73,6 +77,7 @@ class UserData {
         : null;
     registerDate = json['registerDate'];
     updatedDate = json['updatedDate'];
+    notifyListeners();
   }
 
   Map<String, dynamic> toJson() {

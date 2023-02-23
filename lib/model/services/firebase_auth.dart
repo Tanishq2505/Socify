@@ -1,10 +1,19 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hive/hive.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+import 'package:socify/constants.dart';
+import 'package:socify/model/data/user.dart';
+import 'package:socify/view/screens/home_screen.dart';
+import 'package:socify/view/screens/login_screen.dart';
 import 'package:socify/view/widgets/show_snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:socify/view_model/respositories/user_respository.dart';
 
 class FirebaseAuthMethods {
   final FirebaseAuth _auth;
@@ -92,7 +101,7 @@ class FirebaseAuthMethods {
   }
 
   // GOOGLE SIGN IN
-  Future<void> signInWithGoogle(BuildContext context) async {
+  Future<dynamic> signInWithGoogle(BuildContext context) async {
     try {
       if (kIsWeb) {
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
@@ -122,8 +131,47 @@ class FirebaseAuthMethods {
           // do the following:
 
           if (userCredential.user != null) {
-            if (userCredential.additionalUserInfo!.isNewUser) {}
+            DatabaseReference ref = FirebaseDatabase.instance.ref(
+                'users/${userCredential.user!.email!.replaceAll('.', "-")}');
+            if (userCredential.additionalUserInfo!.isNewUser) {
+              UserData userData = Provider.of<UserData>(
+                context,
+                listen: false,
+              );
+              List<String> name = userCredential.user!.displayName!.split(" ");
+              userData.firstName = name[0];
+              userData.lastName = name[1];
+              userData.email = userCredential.user!.email;
+              userData.picture = userCredential.user!.photoURL;
+
+              await UserRepositories(context).createUser(userData: userData);
+              var box = await Hive.openBox(hiveBoxId);
+              await box.put(
+                boxUserId,
+                context.read<UserData>().id,
+              );
+              await ref.set({"id": context.read<UserData>().id});
+            } else {
+              String val =
+                  (await ref.child('/id').once(DatabaseEventType.value))
+                          .snapshot
+                          .value
+                          ?.toString() ??
+                      "";
+              print("WHAYTTT" + val);
+              UserRepositories(context).getUserData(id: val);
+            }
+            Navigator.pushAndRemoveUntil(
+              context,
+              PageTransition(
+                child: HomeScreen(),
+                type: PageTransitionType.fade,
+              ),
+              (route) => false,
+            );
+            return true;
           }
+          return false;
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -135,6 +183,14 @@ class FirebaseAuthMethods {
   Future<void> signOut(BuildContext context) async {
     try {
       await _auth.signOut();
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+          child: LoginScreen(),
+          type: PageTransitionType.fade,
+        ),
+        (route) => false,
+      );
     } on FirebaseAuthException catch (e) {
       showSnackBar(context, e.message!); // Displaying the error message
     }
