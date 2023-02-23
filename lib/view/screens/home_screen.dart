@@ -56,8 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
         activeIndex: _bottomNavIndex,
         gapLocation: GapLocation.center,
         notchSmoothness: NotchSmoothness.softEdge,
-        leftCornerRadius: 32,
-        rightCornerRadius: 32,
         onTap: (index) => setState(() {
           _bottomNavIndex = index;
           pageController.animateToPage(
