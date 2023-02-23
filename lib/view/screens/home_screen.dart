@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:socify/model/data/user.dart';
 import 'package:socify/model/services/firebase_auth.dart';
 import 'package:socify/view/screens/posts_screen.dart';
+import 'package:socify/view/screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -31,10 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     UserData userData = context.watch<UserData>();
     FirebaseAuthMethods methods = context.read<FirebaseAuthMethods>();
-    print(userData.id);
     return Scaffold(
       extendBody: true,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(
+          0xff250c77,
+        ),
+        foregroundColor: Colors.white,
         child: Icon(
           Icons.add,
         ),
@@ -68,13 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: pageController,
         children: [
           PostsScreen(),
-          Center(
-            child: OutlinedButton(
-              onPressed: () {
-                methods.signOut(context);
-              },
-              child: Text("Log Out"),
-            ),
+          ProfileScreen(
+            id: userData.id!,
           ),
         ],
       ),
