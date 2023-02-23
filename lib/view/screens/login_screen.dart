@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
@@ -16,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>
     with AutomaticKeepAliveClientMixin<LoginScreen> {
+  bool loading = false;
   bool get wantKeepAlive => true;
   FocusNode emailFocusNode = FocusNode();
   TextEditingController emailController = TextEditingController();
@@ -63,230 +65,240 @@ class _LoginScreenState extends State<LoginScreen>
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xffd6e2ea),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 32,
-              ),
-              SizedBox(
-                height: 250,
-                width: 250,
-                child: RiveAnimation.asset(
-                  "assets/animated-login-screen.riv",
-                  stateMachines: ["Login Machine"],
-                  fit: BoxFit.fitHeight,
-                  onInit: (Artboard artBoard) {
-                    controller = StateMachineController.fromArtboard(
-                      artBoard,
-                      "Login Machine",
-                    );
-                    if (controller == null) return;
-                    artBoard.addController(controller!);
-                    isChecking = controller?.findInput("isChecking");
-                    numLook = controller?.findInput("numLook");
-                    isHandsUp = controller?.findInput("isHandsUp");
-                    trigSuccess = controller?.findInput("trigSuccess");
-                    trigFail = controller?.findInput("trigFail");
-                  },
+      body: ModalProgressHUD(
+        inAsyncCall: loading,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 32,
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(
+                SizedBox(
+                  height: 250,
+                  width: 250,
+                  child: RiveAnimation.asset(
+                    "assets/animated-login-screen.riv",
+                    stateMachines: ["Login Machine"],
+                    fit: BoxFit.fitHeight,
+                    onInit: (Artboard artBoard) {
+                      controller = StateMachineController.fromArtboard(
+                        artBoard,
+                        "Login Machine",
+                      );
+                      if (controller == null) return;
+                      artBoard.addController(controller!);
+                      isChecking = controller?.findInput("isChecking");
+                      numLook = controller?.findInput("numLook");
+                      isHandsUp = controller?.findInput("isHandsUp");
+                      trigSuccess = controller?.findInput("trigSuccess");
+                      trigFail = controller?.findInput("trigFail");
+                    },
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(
+                      16,
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(
                     16,
                   ),
-                ),
-                padding: const EdgeInsets.all(
-                  16,
-                ),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(
-                            8,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 16,
-                        ),
-                        child: TextFormField(
-                          validator: (val) {
-                            if (val == null) {
-                              return "Please enter your email";
-                            }
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                .hasMatch(val)) {
-                              return "Please enter valid email";
-                            }
-                            return null;
-                          },
-                          focusNode: emailFocusNode,
-                          controller: emailController,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Email",
-                          ),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          onChanged: (value) {
-                            numLook?.change(value.length.toDouble() * 2);
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(
-                            8,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 16,
-                        ),
-                        child: TextFormField(
-                          validator: (val) {
-                            if (val == null || val == "" || val.isEmpty) {
-                              return "Please enter password";
-                            }
-                            if (val.length <= 7) {
-                              return "Password should has at least 8 letters.";
-                            }
-                            return null;
-                          },
-                          focusNode: passFocusNode,
-                          controller: passController,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Password",
-                          ),
-                          obscureText: true,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          onChanged: (value) {},
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 64,
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(
+                              8,
                             ),
                           ),
-                          onPressed: () async {
-                            formKey.currentState!.validate();
-                            emailFocusNode.requestFocus();
-                            emailFocusNode.unfocus();
-                            await methods.loginWithEmail(
-                              email: emailController.text,
-                              password: passController.text,
-                              context: context,
-                            );
-                          },
-                          child: const Text("Login"),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                      InkWell(
-                        onTap: () => Navigator.push(
-                          context,
-                          PageTransition(
-                            child: SignUpScreen(),
-                            type: PageTransitionType.bottomToTop,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 16,
+                          ),
+                          child: TextFormField(
+                            validator: (val) {
+                              if (val == null) {
+                                return "Please enter your email";
+                              }
+                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                  .hasMatch(val)) {
+                                return "Please enter valid email";
+                              }
+                              return null;
+                            },
+                            focusNode: emailFocusNode,
+                            controller: emailController,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Email",
+                            ),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            onChanged: (value) {
+                              numLook?.change(value.length.toDouble() * 2);
+                            },
                           ),
                         ),
-                        child: RichText(
-                          text: TextSpan(
-                              text: "Don't have an account? ",
-                              style: GoogleFonts.questrial(
-                                color: Colors.black,
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(
+                              8,
+                            ),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 16,
+                          ),
+                          child: TextFormField(
+                            validator: (val) {
+                              if (val == null || val == "" || val.isEmpty) {
+                                return "Please enter password";
+                              }
+                              if (val.length <= 7) {
+                                return "Password should has at least 8 letters.";
+                              }
+                              return null;
+                            },
+                            focusNode: passFocusNode,
+                            controller: passController,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Password",
+                            ),
+                            obscureText: true,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            onChanged: (value) {},
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 64,
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
                               ),
+                            ),
+                            onPressed: () async {
+                              formKey.currentState!.validate();
+                              emailFocusNode.requestFocus();
+                              emailFocusNode.unfocus();
+                              await methods.loginWithEmail(
+                                email: emailController.text,
+                                password: passController.text,
+                                context: context,
+                              );
+                            },
+                            child: const Text("Login"),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 6,
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            PageTransition(
+                              child: SignUpScreen(),
+                              type: PageTransitionType.bottomToTop,
+                            ),
+                          ),
+                          child: RichText(
+                            text: TextSpan(
+                                text: "Don't have an account? ",
+                                style: GoogleFonts.questrial(
+                                  color: Colors.black,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: "Sign Up",
+                                    style: GoogleFonts.questrial(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  const TextSpan(
+                                    text: " now.",
+                                  ),
+                                ]),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Divider(
+                            thickness: 2,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 64,
+                          child: FilledButton.tonal(
+                            style: FilledButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            onPressed: () async {
+                              setState(() {
+                                loading = true;
+                              });
+                              emailFocusNode.requestFocus();
+                              emailFocusNode.unfocus();
+
+                              bool? success =
+                                  await methods.signInWithGoogle(context);
+                              if (success == true) {
+                                trigSuccess?.change(true);
+                              } else {
+                                trigFail?.change(true);
+                              }
+                              setState(() {
+                                loading = false;
+                              });
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                TextSpan(
-                                  text: "Sign Up",
-                                  style: GoogleFonts.questrial(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black54,
+                                const Text("Login using Google"),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.08,
+                                  child: Image.network(
+                                    'http://pngimg.com/uploads/google/google_PNG19635.png',
+                                    fit: BoxFit.cover,
+                                    scale: 0.1,
                                   ),
                                 ),
-                                const TextSpan(
-                                  text: " now.",
-                                ),
-                              ]),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Divider(
-                          thickness: 2,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 64,
-                        child: FilledButton.tonal(
-                          style: FilledButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              ],
                             ),
                           ),
-                          onPressed: () async {
-                            emailFocusNode.requestFocus();
-                            emailFocusNode.unfocus();
-
-                            bool? success =
-                                await methods.signInWithGoogle(context);
-                            if (success == true) {
-                              trigSuccess?.change(true);
-                            } else {
-                              trigFail?.change(true);
-                            }
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text("Login using Google"),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.08,
-                                child: Image.network(
-                                  'http://pngimg.com/uploads/google/google_PNG19635.png',
-                                  fit: BoxFit.cover,
-                                  scale: 0.1,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
