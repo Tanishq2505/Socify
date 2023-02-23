@@ -18,7 +18,7 @@ class UserRepositories {
       );
       return data;
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
@@ -33,7 +33,7 @@ class UserRepositories {
       );
       return data;
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
@@ -51,7 +51,7 @@ class UserRepositories {
       );
       return data;
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
@@ -69,7 +69,7 @@ class UserRepositories {
       );
       return data;
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
@@ -88,7 +88,7 @@ class UserRepositories {
         return false;
       }
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,

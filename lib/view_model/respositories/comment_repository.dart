@@ -18,7 +18,7 @@ class CommentRepositories {
       );
       return data;
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
@@ -34,7 +34,7 @@ class CommentRepositories {
       );
       return data;
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
@@ -50,7 +50,7 @@ class CommentRepositories {
       );
       return data;
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
@@ -68,7 +68,7 @@ class CommentRepositories {
       );
       return data;
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
@@ -87,7 +87,7 @@ class CommentRepositories {
         return false;
       }
     } catch (e) {
-      showSnackbar(
+      showSnackBar(
         _context,
         e.toString(),
         Colors.red,
