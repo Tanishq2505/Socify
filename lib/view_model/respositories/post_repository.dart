@@ -26,11 +26,10 @@ class PostRepositories {
     }
   }
 
-  Future<PostDataList?> getPostListByUser(
-      {required String id, required String page}) async {
+  Future<PostDataList?> getPostListByUser({required String id}) async {
     try {
       PostDataList data = PostDataList.fromJson(
-        await _mediaService.get("/user/$id/post?page=$page&limit=10"),
+        await _mediaService.get("/user/$id/post"),
       );
       return data;
     } catch (e) {
