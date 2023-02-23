@@ -72,12 +72,12 @@ class PostRepositories {
     }
   }
 
-  Future<PostData?> createPost({required PostData postData}) async {
+  Future<PostData?> createPost({required Map<String, dynamic> postData}) async {
     try {
       PostData data = PostData.fromJson(
         await _mediaService.post(
           "/post/create",
-          postData.toJson(),
+          postData,
         ),
       );
       return data;

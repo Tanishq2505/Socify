@@ -2,6 +2,8 @@
     package="com.tkdev.socify">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
+
+       android:requestLegacyExternalStorage="true"
         android:label="Socify"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

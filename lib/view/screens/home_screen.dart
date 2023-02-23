@@ -6,6 +6,7 @@ import 'package:socify/model/data/user.dart';
 import 'package:socify/model/services/firebase_auth.dart';
 import 'package:socify/view/screens/posts_screen.dart';
 import 'package:socify/view/screens/profile_screen.dart';
+import 'package:socify/view/widgets/show_new_post_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -47,7 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
             50,
           ),
         ),
-        onPressed: () {},
+        onPressed: () {
+          showNewPostSheet(context, MediaQuery.of(context).size, userData.id!);
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
