@@ -62,6 +62,7 @@ class UserRepositories {
         ),
       );
     } catch (e) {
+      print("SDKFJLhlsakdhfalsjkdf" + e.toString());
       showSnackBar(
         _context,
         e.toString(),

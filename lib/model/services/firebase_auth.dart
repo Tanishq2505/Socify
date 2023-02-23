@@ -39,13 +39,34 @@ class FirebaseAuthMethods {
     required String email,
     required String password,
     required BuildContext context,
+    required TextEditingController nameController,
+    required TextEditingController emailController,
   }) async {
     try {
+      UserData userData = Provider.of<UserData>(
+        context,
+        listen: false,
+      );
+      List<String> name = nameController.text.split(" ");
+      userData.firstName = name[0];
+      userData.lastName = name[1] ?? "";
+      userData.email = emailController.text;
+      userData.picture =
+          "https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg";
+      DatabaseReference ref = FirebaseDatabase.instance
+          .ref('users/${emailController.text.replaceAll('.', "-")}');
+      await UserRepositories(context).createUser(userData: userData);
       await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
       await sendEmailVerification(context);
+      var box = await Hive.openBox(hiveBoxId);
+      await box.put(
+        boxUserId,
+        context.read<UserData>().id,
+      );
+      await ref.set({"id": context.read<UserData>().id});
     } on FirebaseAuthException catch (e) {
       // if you want to display your own custom error message
       if (e.code == 'weak-password') {
@@ -57,10 +78,17 @@ class FirebaseAuthMethods {
           print('The account already exists for that email.');
         }
       }
+      print("alkjdsfhal" + e.message.toString());
       showSnackBar(
         context,
         e.message!,
       ); // Displaying the usual firebase error message
+    } catch (e) {
+      print("WEKSDJFHLKSD" + e.toString());
+      showSnackBar(
+        context,
+        e.toString(),
+      );
     }
   }
 
@@ -71,6 +99,14 @@ class FirebaseAuthMethods {
     required BuildContext context,
   }) async {
     try {
+      DatabaseReference ref =
+          FirebaseDatabase.instance.ref('users/${email.replaceAll('.', "-")}');
+      String val = (await ref.child('/id').once(DatabaseEventType.value))
+              .snapshot
+              .value
+              ?.toString() ??
+          "";
+      UserRepositories(context).getUserData(id: val);
       await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -80,11 +116,13 @@ class FirebaseAuthMethods {
         // restrict access to certain things using provider
         // transition to another page instead of home screen
       }
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(
-      //     builder: (context) => HomeScreen(),
-      //   ),
-      // );
+      Navigator.of(context).pushAndRemoveUntil(
+        PageTransition(
+          child: HomeScreen(),
+          type: PageTransitionType.fade,
+        ),
+        (route) => false,
+      );
     } on FirebaseAuthException catch (e) {
       showSnackBar(context, e.message!); // Displaying the error message
     }

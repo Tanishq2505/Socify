@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
 import 'package:socify/model/services/firebase_auth.dart';
+import 'package:socify/view/screens/sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -187,9 +189,15 @@ class _LoginScreenState extends State<LoginScreen>
                               borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             formKey.currentState!.validate();
                             emailFocusNode.requestFocus();
+                            emailFocusNode.unfocus();
+                            await methods.loginWithEmail(
+                              email: emailController.text,
+                              password: passController.text,
+                              context: context,
+                            );
                           },
                           child: const Text("Login"),
                         ),
@@ -198,12 +206,13 @@ class _LoginScreenState extends State<LoginScreen>
                         height: 6,
                       ),
                       InkWell(
-                        // onTap: () => Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (builder) => SignUpScreen(),
-                        //   ),
-                        // ),
+                        onTap: () => Navigator.push(
+                          context,
+                          PageTransition(
+                            child: SignUpScreen(),
+                            type: PageTransitionType.bottomToTop,
+                          ),
+                        ),
                         child: RichText(
                           text: TextSpan(
                               text: "Don't have an account? ",
