@@ -80,6 +80,24 @@ class UserData extends ChangeNotifier {
     notifyListeners();
   }
 
+  UserData.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    title = json['title'];
+    firstName = json['firstName'];
+    lastName = json['lastName'];
+    picture = json['picture'];
+    gender = json['gender'];
+    email = json['email'];
+    dateOfBirth = json['dateOfBirth'];
+    phone = json['phone'];
+    location = json['location'] != null
+        ? new Location.fromJson(json['location'])
+        : null;
+    registerDate = json['registerDate'];
+    updatedDate = json['updatedDate'];
+    notifyListeners();
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;

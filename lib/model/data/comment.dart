@@ -44,8 +44,7 @@ class CommentData {
   CommentData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     message = json['message'];
-    owner =
-        json['owner'] != null ? new UserData().fromJson(json['owner']) : null;
+    owner = json['owner'] != null ? new UserData.fromJson(json['owner']) : null;
     post = json['post'];
     publishDate = json['publishDate'];
   }

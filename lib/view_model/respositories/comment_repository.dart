@@ -26,11 +26,10 @@ class CommentRepositories {
     }
   }
 
-  Future<CommentListData?> getCommentListByPost(
-      {required String id, required String page}) async {
+  Future<CommentListData?> getCommentListByPost({required String id}) async {
     try {
       CommentListData data = CommentListData.fromJson(
-        await _mediaService.get("/post/$id/comment?page=$page&limit=10"),
+        await _mediaService.get("/post/$id/comment"),
       );
       return data;
     } catch (e) {
@@ -58,16 +57,18 @@ class CommentRepositories {
     }
   }
 
-  Future<CommentData?> createComment({required CommentData commentData}) async {
+  Future<CommentData?> createComment(
+      {required Map<String, dynamic> commentData}) async {
     try {
       CommentData data = CommentData.fromJson(
         await _mediaService.post(
-          "/post/create",
-          commentData.toJson(),
+          "/comment/create",
+          commentData,
         ),
       );
       return data;
     } catch (e) {
+      print(e);
       showSnackBar(
         _context,
         e.toString(),

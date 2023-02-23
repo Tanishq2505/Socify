@@ -1,9 +1,13 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:socify/model/data/post.dart';
+import 'package:socify/model/data/user.dart';
+import 'package:socify/view/widgets/show_comment_sheet.dart';
 import 'package:socify/view_model/respositories/post_repository.dart';
 
 class PostsScreen extends StatefulWidget {
@@ -30,6 +34,7 @@ class _PostsScreenState extends State<PostsScreen>
 
   @override
   Widget build(BuildContext context) {
+    UserData userData = context.watch<UserData>();
     AppBar appBar = AppBar(
       centerTitle: true,
       title: Container(
@@ -230,7 +235,14 @@ class _PostsScreenState extends State<PostsScreen>
                                               ),
                                               Spacer(),
                                               TextButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  showCommentSheet(
+                                                    context,
+                                                    size,
+                                                    data[index].id.toString(),
+                                                    userData,
+                                                  );
+                                                },
                                                 child: Text("View Comments"),
                                               ),
                                             ],
